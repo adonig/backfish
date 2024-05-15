@@ -2,16 +2,18 @@ defmodule Backfish do
   @doc """
   Finds all solutions to the given problem.
   """
-  def find_all_solutions(problem_module) do
-    initial_state = problem_module.initial_state()
+  def find_all_solutions(problem_module, opts \\ []) do
+    args = Keyword.get(opts, :args, [])
+    initial_state = problem_module.initial_state(args)
     solve_all(problem_module, initial_state, [])
   end
 
   @doc """
   Finds the first valid solution to the given problem.
   """
-  def find_first_solution(problem_module) do
-    initial_state = problem_module.initial_state()
+  def find_first_solution(problem_module, opts \\ []) do
+    args = Keyword.get(opts, :args, [])
+    initial_state = problem_module.initial_state(args)
     solve_first(problem_module, initial_state, [])
   end
 

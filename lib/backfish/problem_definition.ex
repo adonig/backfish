@@ -1,5 +1,5 @@
 defmodule Backfish.ProblemDefinition do
-  @callback initial_state() :: any()
+  @callback initial_state(args :: keyword()) :: any()
   @callback is_goal?(state :: any(), path :: [any()]) :: boolean()
   @callback next_steps(state :: any(), path :: [any()]) :: [any()]
 
@@ -7,8 +7,8 @@ defmodule Backfish.ProblemDefinition do
     quote do
       @behaviour Backfish.ProblemDefinition
 
-      def initial_state() do
-        raise "initial_state/0 not implemented"
+      def initial_state(_args) do
+        raise "initial_state/1 not implemented"
       end
 
       def is_goal?(_state, _path) do
