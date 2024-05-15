@@ -1,7 +1,7 @@
 defmodule Backfish.ProblemDefinition do
   @callback initial_state(args :: keyword()) :: any()
-  @callback is_goal?(state :: any(), path :: [any()]) :: boolean()
-  @callback next_steps(state :: any(), path :: [any()]) :: [any()]
+  @callback is_goal?(state :: any()) :: boolean()
+  @callback next_steps(state :: any()) :: [any()]
 
   defmacro __using__(_opts) do
     quote do
@@ -11,12 +11,12 @@ defmodule Backfish.ProblemDefinition do
         raise "initial_state/1 not implemented"
       end
 
-      def is_goal?(_state, _path) do
-        raise "is_goal?/2 not implemented"
+      def is_goal?(_state) do
+        raise "is_goal?/1 not implemented"
       end
 
-      def next_steps(_state, _path) do
-        raise "next_steps/2 not implemented"
+      def next_steps(_state) do
+        raise "next_steps/1 not implemented"
       end
 
       defoverridable Backfish.ProblemDefinition

@@ -8,11 +8,11 @@ defmodule Backfish.Examples.NQueens do
     %{board: [], size: size}
   end
 
-  def is_goal?(%{board: board, size: size}, _path) do
+  def is_goal?(%{board: board, size: size}) do
     length(board) == size
   end
 
-  def next_steps(%{board: board, size: size}, _path) do
+  def next_steps(%{board: board, size: size}) do
     row = length(board) + 1
 
     1..size

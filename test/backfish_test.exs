@@ -5,8 +5,8 @@ defmodule BackfishTest do
     use Backfish.ProblemDefinition
 
     def initial_state(args), do: Keyword.get(args, :start, 0)
-    def is_goal?(state, _path), do: state == 3
-    def next_steps(state, _path), do: [state + 1]
+    def is_goal?(state), do: state == 3
+    def next_steps(state), do: [state + 1]
   end
 
   describe "find_all_solutions/2" do
@@ -19,6 +19,16 @@ defmodule BackfishTest do
       solutions = Backfish.find_all_solutions(TestProblem, args: [start: 1])
       assert solutions == [[2, 3]]
     end
+
+    test "setting depth_limit prevents nontermination" do
+      solutions =
+        Backfish.find_all_solutions(TestProblem,
+          args: [start: 4],
+          depth_limit: 15
+        )
+
+      assert solutions == []
+    end
   end
 
   describe "find_first_solution/2" do
@@ -30,6 +40,14 @@ defmodule BackfishTest do
     test "passes args to initial_state/1" do
       {:ok, solution} = Backfish.find_first_solution(TestProblem, args: [start: 1])
       assert solution == [2, 3]
+    end
+
+    test "setting depth_limit prevents nontermination" do
+      :error =
+        Backfish.find_first_solution(TestProblem,
+          args: [start: 4],
+          depth_limit: 15
+        )
     end
   end
 end

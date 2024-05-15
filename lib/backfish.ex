@@ -4,8 +4,9 @@ defmodule Backfish do
   """
   def find_all_solutions(problem_module, opts \\ []) do
     args = Keyword.get(opts, :args, [])
+    depth_limit = Keyword.get(opts, :depth_limit)
     initial_state = problem_module.initial_state(args)
-    solve_all(problem_module, initial_state, [])
+    solve_all(problem_module, initial_state, [], depth_limit, 0)
   end
 
   @doc """
@@ -13,28 +14,49 @@ defmodule Backfish do
   """
   def find_first_solution(problem_module, opts \\ []) do
     args = Keyword.get(opts, :args, [])
+    depth_limit = Keyword.get(opts, :depth_limit)
     initial_state = problem_module.initial_state(args)
-    solve_first(problem_module, initial_state, [])
+    solve_first(problem_module, initial_state, [], depth_limit, 0)
   end
 
-  defp solve_all(problem_module, state, path) do
-    if problem_module.is_goal?(state, path) do
+  defp solve_all(_, _, _, depth_limit, depth) when depth >= depth_limit do
+    []
+  end
+
+  defp solve_all(problem_module, state, path, depth_limit, depth) do
+    if problem_module.is_goal?(state) do
       [Enum.reverse(path)]
     else
-      problem_module.next_steps(state, path)
+      problem_module.next_steps(state)
       |> Enum.flat_map(fn next_state ->
-        solve_all(problem_module, next_state, [next_state | path])
+        solve_all(
+          problem_module,
+          next_state,
+          [next_state | path],
+          depth_limit,
+          depth + 1
+        )
       end)
     end
   end
 
-  defp solve_first(problem_module, state, path) do
-    if problem_module.is_goal?(state, path) do
+  defp solve_first(_, _, _, depth_limit, depth) when depth >= depth_limit do
+    :error
+  end
+
+  defp solve_first(problem_module, state, path, depth_limit, depth) do
+    if problem_module.is_goal?(state) do
       {:ok, Enum.reverse(path)}
     else
-      problem_module.next_steps(state, path)
+      problem_module.next_steps(state)
       |> Enum.find_value(fn next_state ->
-        case solve_first(problem_module, next_state, [next_state | path]) do
+        case solve_first(
+               problem_module,
+               next_state,
+               [next_state | path],
+               depth_limit,
+               depth + 1
+             ) do
           {:ok, solution} -> {:ok, solution}
           :error -> nil
         end
