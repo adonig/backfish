@@ -25,7 +25,7 @@ defmodule Backfish do
 
   defp solve_all(problem_module, state, path, depth_limit, depth) do
     if problem_module.is_goal?(state) do
-      [Enum.reverse(path)]
+      [state]
     else
       problem_module.next_steps(state)
       |> Enum.flat_map(fn next_state ->
@@ -46,7 +46,7 @@ defmodule Backfish do
 
   defp solve_first(problem_module, state, path, depth_limit, depth) do
     if problem_module.is_goal?(state) do
-      {:ok, Enum.reverse(path)}
+      {:ok, state}
     else
       problem_module.next_steps(state)
       |> Enum.find_value(fn next_state ->
