@@ -4,10 +4,12 @@ defmodule Backfish.MixProject do
   def project do
     [
       app: :backfish,
+      description: "A flexible and powerful backtracking library for Elixir.",
       version: "0.1.0",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      package: package(),
       # ExDoc
       name: "Backfish",
       source_url: "https://github.com/adonig/backfish",
@@ -31,6 +33,15 @@ defmodule Backfish.MixProject do
   defp deps do
     [
       {:ex_doc, "~> 0.31", only: :dev, runtime: false}
+    ]
+  end
+
+  defp package() do
+    [
+      name: :backfish,
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/adonig/backfish"},
+      maintainers: ["Andreas Donig"]
     ]
   end
 end
