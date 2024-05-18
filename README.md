@@ -95,3 +95,7 @@ Documentation can be generated with ExDoc and published on HexDocs. Once publish
 ## License
 
 Backfish is released under the [MIT License](LICENSE).
+
+## Credits
+
+Special thanks to [ChatGPT 4o](https://chat.openai.com/) for helping me build this library in 3 days.
