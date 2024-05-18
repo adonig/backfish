@@ -10,7 +10,6 @@ defmodule Backfish.Examples.KnapsackTest do
 
     solutions =
       Backfish.find_all_solutions(Knapsack, args: [items: items, capacity: capacity])
-      |> Enum.to_list()
 
     # Find the solution with the maximum value
     best_solution = Enum.max_by(solutions, fn solution -> solution.current_value end)

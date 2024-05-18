@@ -3,7 +3,7 @@ defmodule Backfish.Examples.WordSearchTest do
 
   alias Backfish.Examples.WordSearch
 
-  test "finds all words in the word search puzzle" do
+  setup do
     board = [
       ["I", "G", "O", "N", "G", "N", "T", "E", "R", "E", "T", "T", "O", "R"],
       ["Y", "W", "L", "R", "O", "R", "G", "R", "A", "C", "C", "O", "O", "N"],
@@ -44,10 +44,25 @@ defmodule Backfish.Examples.WordSearchTest do
     ]
 
     {:ok, solution} =
-      Backfish.find_first_solution(WordSearch,
-        args: [board: board, words: words]
-      )
+      Backfish.find_first_solution(WordSearch, args: [board: board, words: words])
 
-    assert WordSearch.is_goal?(solution)
+    {:ok, board: board, words: words, solution: solution}
+  end
+
+  test "finds all words in the word search puzzle", %{words: words, solution: solution} do
+    assert Enum.sort(words) == Enum.sort(solution.found_words)
+  end
+
+  test "paths correspond to correct words", %{board: board, solution: solution} do
+    for {found_word, n} <- Enum.with_index(solution.found_words) do
+      path = Enum.at(solution.paths, n)
+
+      path_word =
+        Enum.reduce(path, "", fn {row, col}, acc ->
+          acc <> Enum.at(Enum.at(board, row), col)
+        end)
+
+      assert found_word == path_word
+    end
   end
 end
