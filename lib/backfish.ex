@@ -26,8 +26,10 @@ defmodule Backfish do
   def find_all_solutions(problem_module, opts \\ []) do
     args = Keyword.get(opts, :args, [])
     depth_limit = Keyword.get(opts, :depth_limit, :infinity)
+    memoize = Keyword.get(opts, :memoize, true)
     initial_state = problem_module.initial_state(args)
-    solve_all(problem_module, initial_state, depth_limit, 0)
+    cache = if memoize, do: %{}, else: nil
+    solve_all(problem_module, initial_state, depth_limit, 0, cache)
   end
 
   @doc """
@@ -56,16 +58,27 @@ defmodule Backfish do
     solve_first(problem_module, initial_state, depth_limit, 0)
   end
 
-  defp solve_all(_, _, depth_limit, depth) when depth >= depth_limit,
+  defp solve_all(_, _, depth_limit, depth, _) when depth >= depth_limit,
     do: []
 
-  defp solve_all(problem_module, state, depth_limit, depth) do
+  defp solve_all(problem_module, state, depth_limit, depth, cache) do
     if problem_module.is_goal?(state) do
       [state]
     else
-      problem_module.next_steps(state)
+      {next_steps, next_cache} =
+        case Map.get(cache || %{}, state) do
+          nil ->
+            next_steps = problem_module.next_steps(state)
+            next_cache = if cache, do: Map.put(cache, state, next_steps), else: nil
+            {next_steps, next_cache}
+
+          next_steps ->
+            {next_steps, cache}
+        end
+
+      next_steps
       |> Enum.flat_map(fn next_state ->
-        solve_all(problem_module, next_state, depth_limit, depth + 1)
+        solve_all(problem_module, next_state, depth_limit, depth + 1, next_cache)
       end)
     end
   end
